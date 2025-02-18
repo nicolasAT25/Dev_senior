@@ -1,1 +1,46 @@
-{"fisica": {"caudal": {"id": 1, "volumen": 4.0, "tiempo": 3.0, "fecha_experimento": "2026-01-01", "fecha_registro": "2025-02-03"}}, "quimica": {}, "biologia": {}}
+{
+    "fisica": {
+        "caudal": {
+            "id": [
+                0,
+                1,
+                2
+            ],
+            "volumen": [
+                3.0,
+                6.0,
+                8.0
+            ],
+            "tiempo": [
+                1.0,
+                3.0,
+                5.0
+            ],
+            "fecha_experimento": [
+                "2025-02-17",
+                "2022-08-25",
+                "2024-11-13"
+            ],
+            "fecha_registro": [
+                "2025-02-17",
+                "2025-02-17",
+                "2025-02-17"
+            ],
+            "caudal": [
+                3.0,
+                2.0,
+                1.6
+            ]
+        },
+        "area_circulo": {
+            "id": [],
+            "pi": [],
+            "radio": [],
+            "fecha_experimento": [],
+            "fecha_registro": [],
+            "area_circulo": []
+        }
+    },
+    "quimica": {},
+    "biologia": {}
+}
