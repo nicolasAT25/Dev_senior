@@ -5,11 +5,14 @@ import json
 # Funciones básicas
 from utils import limpiar_pantalla, mostrar_menu, mostrar_categorias
 
-#Funciones de validación
+# Funciones de validación
 from utils import validar_num_positivo, validar_fecha
 
+# Funciones generales
+from utils import leer_experimentos_categoria, leer_lista_experimentos
+
 # Funciones Física
-from utils import mostrar_experimentos_fisica, crear_fisica_caudal
+from utils import mostrar_experimentos_fisica, crear_fisica_caudal, leer_fisica_exp_idx
 
 mostrar_menu()
 
@@ -38,3 +41,30 @@ if sel == 1:
             fecha = validar_fecha(fecha)
             
             print(crear_fisica_caudal(volumen=volumen, tiempo=tiempo, fecha=fecha))
+            
+elif sel == 4:
+    mostrar_categorias()
+    categoria_temp = input('Selecciona la categría de la cual quieres consutar los experimentos: ')
+    limpiar_pantalla()
+    
+    if categoria_temp == "a" or categoria_temp == "Física".lower():
+        categoria = "fisica"
+        leer_experimentos_categoria(categoria)
+            
+elif sel == 5:
+    mostrar_categorias()
+    categoria_temp = input('Selecciona la categría de la cual quieres consutar un experimento por ID: ')
+    limpiar_pantalla()
+    
+    if categoria_temp == "a" or categoria_temp == "Física".lower():
+        categoria = "fisica"
+        mostrar_experimentos_fisica()
+    experimento_temp = input("Ingresa el experimento del cual quieres consultar por ID: ")
+    limpiar_pantalla()
+    
+    if experimento_temp == "a" or experimento_temp == "Cálculo del caudal".lower():
+        experimento = "caudal"
+        leer_lista_experimentos(categoria, experimento)    
+        idx = int(input('Ingresa al ID: '))
+        limpiar_pantalla()
+        leer_fisica_exp_idx(categoria, experimento, idx)
