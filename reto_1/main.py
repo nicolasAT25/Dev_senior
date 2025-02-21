@@ -9,10 +9,10 @@ from utils import limpiar_pantalla, mostrar_menu, mostrar_categorias
 from utils import validar_num_positivo, validar_fecha
 
 # Funciones generales
-from utils import leer_experimentos_categoria, leer_lista_experimentos
+from utils import leer_experimentos_categorias, mostrar_ids_disponibles
 
 # Funciones Física
-from utils import mostrar_experimentos_fisica, crear_fisica_caudal, leer_fisica_exp_idx
+from utils import mostrar_experimentos_fisica, crear_fisica_caudal, leer_fisica_caudal_exp_idx, actualizar_fisica_caudal_exp_idx, leer_lista_experimentos_categoria
 
 mostrar_menu()
 
@@ -49,7 +49,7 @@ elif sel == 4:
     
     if categoria_temp == "a" or categoria_temp == "Física".lower():
         categoria = "fisica"
-        leer_experimentos_categoria(categoria)
+        leer_experimentos_categorias(categoria)
             
 elif sel == 5:
     mostrar_categorias()
@@ -59,12 +59,44 @@ elif sel == 5:
     if categoria_temp == "a" or categoria_temp == "Física".lower():
         categoria = "fisica"
         mostrar_experimentos_fisica()
-    experimento_temp = input("Ingresa el experimento del cual quieres consultar por ID: ")
+    experimento_temp = input("Selecciona el experimento del cual quieres consultar por ID: ")
     limpiar_pantalla()
     
     if experimento_temp == "a" or experimento_temp == "Cálculo del caudal".lower():
         experimento = "caudal"
-        leer_lista_experimentos(categoria, experimento)    
+        mostrar_ids_disponibles(categoria, experimento)    
         idx = int(input('Ingresa al ID: '))
         limpiar_pantalla()
-        leer_fisica_exp_idx(categoria, experimento, idx)
+        leer_fisica_caudal_exp_idx(categoria, experimento, idx)
+            
+elif sel == 6:
+    mostrar_categorias()
+    categoria_temp = input('Selecciona la categría del experimento que deseas modificar por ID: ')
+    limpiar_pantalla()
+    
+    if categoria_temp == "a" or categoria_temp == "Física".lower():
+        categoria = "fisica"
+        mostrar_experimentos_fisica()
+    experimento_temp = input("Selecciona el experimento del cual quieres consultar por ID: ")
+    limpiar_pantalla()
+    
+    if experimento_temp == "a" or experimento_temp == "Cálculo del caudal".lower():
+        experimento = "caudal"
+        leer_lista_experimentos_categoria(categoria, experimento) 
+
+        idx = int(input('Ingresa al ID: '))
+        limpiar_pantalla()
+
+        nuevo_volumen = float(input('Ingresa el nuevo volumen en litros: '))
+        validar_num_positivo(nuevo_volumen)
+        limpiar_pantalla()
+
+        nuevo_tiempo = float(input('Ingresa el nuevo tiempo en segundos: '))
+        validar_num_positivo(nuevo_volumen)
+        limpiar_pantalla()
+
+        nueva_fecha = input("Ingresa la nueva fecha en que se realizó el experimento (YYYY-mm-dd): ")
+        nueva_fecha = validar_fecha(nueva_fecha)
+
+        limpiar_pantalla()
+        print(actualizar_fisica_caudal_exp_idx(categoria, experimento, idx, nuevo_volumen, nuevo_tiempo, nueva_fecha))

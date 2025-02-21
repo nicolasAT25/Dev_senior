@@ -25,7 +25,7 @@ def mostrar_menu():
     3. Consultar todos los experimentos.\n\
     4. Consultar todos los experimentos de una categoría.\n\
     5. Consultar un solo experimento por ID de una categoría.\n\
-    6. Editar un experimento.\n\
+    6. Editar un experimento por ID.\n\
     7. Eliminar un experimento.\n\
     8. Generar informe de los experimentos de una categría.\n\
     9. Generar informe de todos los experimentos.\n\
@@ -79,7 +79,7 @@ def guardar_registo_db(db):
             json.dump(db, f)
 
 # Funciones transversales experimentos            
-def leer_experimentos_categoria(categoria:str):
+def leer_experimentos_categorias(categoria:str):
     db = leer_db()
     for i in db[categoria].keys():
         print(f"\t\t\t*{i.title()}*")
@@ -88,17 +88,20 @@ def leer_experimentos_categoria(categoria:str):
         print(df)
         print()
         
-def leer_lista_experimentos(categoria:str, experimento:str):
+def leer_lista_experimentos_categoria(categoria:str, experimento:str):
     db = leer_db()
     df = pd.DataFrame(db[categoria][experimento])
     df.set_index("id", inplace=True)
     print(df)
+        
+def mostrar_ids_disponibles(categoria:str, experimento:str):
+    db = leer_db()
+    print(f"IDs disponibles: {', '.join([str(item) for item in db[categoria][experimento]["id"]])}")
 
 ######### CRUD experimentos FÍSICA #########
     
 ### Caudal ###
 def crear_fisica_caudal(volumen:float, tiempo:float, fecha:str):
-    global id_count
     
     # Cálculo
     print(f'Volumen: {volumen}\nTiempo: {tiempo}')    
@@ -127,10 +130,32 @@ def crear_fisica_caudal(volumen:float, tiempo:float, fecha:str):
     
     return f'El caudal del experimento es {res} L/s.\nExperimento registrado con exito!'
 
-def leer_fisica_exp_idx(categoria:str, experimento:str, idx:int):
+def leer_fisica_caudal_exp_idx(categoria:str, experimento:str, idx:int):
     db = leer_db()
     df = pd.DataFrame(db[categoria][experimento])
     df.set_index("id", inplace=True)
     print(f"\t*{categoria.title()}*")
     print(f"\t*{experimento.title()}*")
     print(df.loc[idx])
+
+def actualizar_fisica_caudal_exp_idx(categoria:str, experimento:str, idx:int, nuevo_volumen:float, nuevo_tiempo:float, nueva_fecha:str):
+    # leer_lista_experimentos_categoria(categoria, experimento)
+
+    print(f'Volumen: {nuevo_volumen}\nTiempo: {nuevo_tiempo}') 
+    nueva_res = round(nuevo_volumen / nuevo_tiempo, 2)
+
+    db = leer_db()
+
+    posicion = db[categoria][experimento]['id'].index(idx)
+
+    db[categoria][experimento]['volumen'][posicion] = nuevo_volumen
+    db[categoria][experimento]['tiempo'][posicion] = nuevo_tiempo
+    db[categoria][experimento]['caudal'][posicion] = nueva_res
+    db[categoria][experimento]['fecha_experimento'][posicion] = nueva_fecha
+    db[categoria][experimento]['fecha_registro'][posicion] = str(datetime.now().date()) # Se sobreescribe la fecha de registro.
+
+    guardar_registo_db(db)
+    
+    print()
+    
+    return f'El nuevo caudal del experimento es {nueva_res} L/s.\nExperimento modificado con exito!'
