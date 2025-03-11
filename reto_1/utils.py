@@ -3,7 +3,6 @@ import platform
 from datetime import datetime
 import json
 import pandas as pd
-from IPython.display import display
 
 ### Funciones básicas de flujo ###
 def limpiar_pantalla():
@@ -15,21 +14,21 @@ def limpiar_pantalla():
 
 def mostrar_menu():
     print()
-    print("\t\tExperimentos App")
+    print("\t\t🔬 Experimentos App 🔬")
     print()
 
     print("MENÚ\n")
     print("\
-    1. Registrar un experimento.\n\
-    2. Registrar varios experimentos.\n\
-    3. Consultar todos los experimentos.\n\
-    4. Consultar todos los experimentos de una categoría.\n\
-    5. Consultar un solo experimento por ID de una categoría.\n\
-    6. Editar un experimento por ID.\n\
-    7. Eliminar un experimento.\n\
-    8. Generar informe de los experimentos de una categría.\n\
-    9. Generar informe de todos los experimentos.\n\
-    10. Salir.")
+    1. Registrar un experimento 🧪\n\
+    2. Registrar varios experimentos 🔬\n\
+    3. Consultar todos los experimentos 🔎\n\
+    4. Consultar todos los experimentos de una categoría 🔎🧪\n\
+    5. Consultar un solo experimento por ID de una categoría 🔎🧪🆔\n\
+    6. Editar un experimento por ID 📝🧪🆔\n\
+    7. Eliminar un experimento por ID ❌🆔\n\
+    8. Generar informe de los experimentos de una categría ℹ️🧪\n\
+    9. Generar informe de todos los experimentos ℹ️\n\
+    10. Salir 🚪")
     print()
     
 def mostrar_categorias():
@@ -78,7 +77,7 @@ def guardar_registo_db(db):
     with open('db_experimentos.json', 'w') as f:
             json.dump(db, f)
 
-# Funciones transversales experimentos            
+# Funciones transversales experimentos 
 def leer_experimentos_categorias(categoria:str):
     db = leer_db()
     for i in db[categoria].keys():
@@ -98,11 +97,29 @@ def mostrar_ids_disponibles(categoria:str, experimento:str):
     db = leer_db()
     print(f"IDs disponibles: {', '.join([str(item) for item in db[categoria][experimento]["id"]])}")
 
+def eliminar_exp_id(categoria:str, experimento:str, idx:int):
+
+    db = leer_db()
+
+    posicion = db[categoria][experimento]['id'].index(idx)
+
+    db[categoria][experimento]['id'].pop(posicion)
+    db[categoria][experimento]['volumen'].pop(posicion)
+    db[categoria][experimento]['tiempo'].pop(posicion)
+    db[categoria][experimento]['caudal'].pop(posicion)
+    db[categoria][experimento]['fecha_experimento'].pop(posicion)
+    db[categoria][experimento]['fecha_registro'].pop(posicion)
+
+    guardar_registo_db(db)
+    
+    print()
+    
+    return f'El experimento "{experimento}" con ID {idx} de la categoría "{categoria}" se a eliminado con éxito.'
+
 ######### CRUD experimentos FÍSICA #########
     
 ### Caudal ###
 def crear_fisica_caudal(volumen:float, tiempo:float, fecha:str):
-    
     # Cálculo
     print(f'Volumen: {volumen}\nTiempo: {tiempo}')    
     res = round(volumen / tiempo, 2)
@@ -129,6 +146,27 @@ def crear_fisica_caudal(volumen:float, tiempo:float, fecha:str):
     print()
     
     return f'El caudal del experimento es {res} L/s.\nExperimento registrado con exito!'
+
+def leer_experimentos():
+    db = leer_db()
+    
+    keys = list(db.keys())
+    values = [list(i.keys()) for i in list(db.values())]
+
+    for v in values[0]:
+        print(f"\t\tCategoría {keys[0].title()} - Experimento {" ".join(v.split("_")).title()}")
+        print(pd.DataFrame(db[keys[0]][v]).set_index("id"))
+        print()
+
+    for v in values[1]:
+        print(f"\t\tCategoría {keys[1].title()} - Experimento {" ".join(v.split("_")).title()}")
+        print(pd.DataFrame(db[keys[1]][v]).set_index("id"))
+        print()
+
+    for v in values[2]:
+        print(f"\t\tCategoría {keys[2].title()} - Experimento {" ".join(v.split("_")).title()}")
+        print(pd.DataFrame(db[keys[2]][v]).set_index("id"))
+        print()
 
 def leer_fisica_caudal_exp_idx(categoria:str, experimento:str, idx:int):
     db = leer_db()
