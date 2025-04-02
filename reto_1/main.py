@@ -13,6 +13,10 @@ from utils import leer_experimentos_categorias, mostrar_ids_disponibles, elimina
 
 # Funciones Física
 from utils import mostrar_experimentos_fisica, crear_fisica_caudal, leer_fisica_caudal_exp_idx, actualizar_fisica_caudal_exp_idx, leer_lista_experimentos_categoria
+from utils import crear_fisica_voltaje, leer_fisica_voltaje_exp_idx, actualizar_voltaje_caudal_exp_idx
+
+# Funciones Química
+from utils import mostrar_experimentos_quimica
 
 # mostrar_menu()
 
@@ -28,6 +32,7 @@ while True:
         mostrar_categorias()
         categoria = input('Selecciona la categría del experimento a registrar: ')
         limpiar_pantalla()
+        
         if categoria == 'Física' or categoria == 'a':
             mostrar_experimentos_fisica()
             exp = input('Selecciona el experimento: ')
@@ -46,6 +51,25 @@ while True:
                 fecha = validar_fecha(fecha)
                 
                 print(crear_fisica_caudal(volumen=volumen, tiempo=tiempo, fecha=fecha))
+                
+            elif exp == 'b':    # Ley de Ohm (volataje)
+                corriente = float(input('Ingresa la corriente eléctrica en amperios: '))
+                validar_num_positivo(corriente)
+                limpiar_pantalla()
+                
+                resistencia = float(input('Ingresa la resistencia en ohmios: '))
+                validar_num_positivo(resistencia)
+                limpiar_pantalla()
+                
+                fecha = input("Ingresa la fecha en que se realizó el experimento (YYYY-mm-dd): ")
+                fecha = validar_fecha(fecha)
+                
+                print(crear_fisica_voltaje(corriente=corriente, resistencia=resistencia, fecha=fecha))
+                
+        elif categoria == 'Química' or categoria == 'b':
+            mostrar_experimentos_quimica()
+            exp = input('Selecciona el experimento: ')
+            limpiar_pantalla()
 
     elif sel == 2:
         num_experimentos = int(input("Ingresa el número de experimentos a registrar: "))
@@ -109,6 +133,13 @@ while True:
             idx = int(input('Ingresa al ID: '))
             limpiar_pantalla()
             leer_fisica_caudal_exp_idx(categoria, experimento, idx)
+            
+        if experimento_temp == "b" or experimento_temp == "Ley de Ohm".lower():
+            experimento = "voltaje"
+            mostrar_ids_disponibles(categoria, experimento)    
+            idx = int(input('Ingresa al ID: '))
+            limpiar_pantalla()
+            leer_fisica_voltaje_exp_idx(categoria, experimento, idx)
                 
     elif sel == 6:
         mostrar_categorias()
@@ -141,6 +172,27 @@ while True:
 
             limpiar_pantalla()
             print(actualizar_fisica_caudal_exp_idx(categoria, experimento, idx, nuevo_volumen, nuevo_tiempo, nueva_fecha))
+        
+        elif experimento_temp == "b" or experimento_temp == "Ley de Ohm".lower():
+            experimento = "voltaje"
+            leer_lista_experimentos_categoria(categoria, experimento) 
+
+            idx = int(input('Ingresa al ID: '))
+            limpiar_pantalla()
+
+            nueva_corriente = float(input('Ingresa la nueva corriente en amperios: '))
+            validar_num_positivo(nueva_corriente)
+            limpiar_pantalla()
+
+            nueva_resistencia = float(input('Ingresa la nueva resistencia en ohmios: '))
+            validar_num_positivo(nueva_resistencia)
+            limpiar_pantalla()
+
+            nueva_fecha = input("Ingresa la nueva fecha en que se realizó el experimento (YYYY-mm-dd): ")
+            nueva_fecha = validar_fecha(nueva_fecha)
+
+            limpiar_pantalla()
+            print(actualizar_voltaje_caudal_exp_idx(categoria, experimento, idx, nueva_corriente, nueva_resistencia, nueva_fecha))
 
     elif sel == 7:
         mostrar_categorias()
@@ -163,10 +215,10 @@ while True:
             
             print(eliminar_exp_id(categoria, experimento, idx))
     
-    elif sel == 10:
+    elif sel == 9:
         print("\n👋 Saliendo de 🔬 Experimentos App 🔬...")
         print()
         break
     
     else:
-        print("\n❌ ¡Opción inválida! Elija una opción del 1 al 4.")
+        print("\n❌ ¡Opción inválida! Elija una opción del 1 al 10.")
