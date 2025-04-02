@@ -27,8 +27,7 @@ def mostrar_menu():
     6. Editar un experimento por ID 📝🧪🆔\n\
     7. Eliminar un experimento por ID ❌🆔\n\
     8. Generar informe de los experimentos de una categría ℹ️🧪\n\
-    9. Generar informe de todos los experimentos ℹ️\n\
-    10. Salir 🚪")
+    9.  Salir 🚪")
     print()
     
 def mostrar_categorias():
@@ -44,7 +43,16 @@ def mostrar_experimentos_fisica():
     print("Experimentos de Física\n")
     print("\
     a. Cálculo del caudal.\n\
-    b. Área de un círculo.")
+    b. Ley de Ohm.\n\
+    c. Caída libre.")
+    print()
+    
+def mostrar_experimentos_quimica():
+    print("Experimentos de Química\n")
+    print("\
+    a. Cálculo del caudal.\n\
+    b. Ley de Ohm (Voltaje).\n\
+    c. Caída libre.")
     print()
  
 ### Funciones de validación de datos ###
@@ -67,7 +75,7 @@ def validar_fecha(fecha:str):
     
     return str(fecha)
 
-### Funciones para la "Base de Datos"
+### Funciones para la "Base de Datos" ###
 def leer_db():
     with open('db_experimentos.json', 'r') as f:
         db = json.load(f)
@@ -77,8 +85,8 @@ def guardar_registo_db(db):
     with open('db_experimentos.json', 'w') as f:
             json.dump(db, f)
 
-# Funciones transversales experimentos 
-def leer_experimentos_categorias(categoria:str):
+### Funciones transversales experimentos ###
+def leer_experimentos_categorias(categoria:str):        # Muestra los experimentos de todas las categorías
     db = leer_db()
     for i in db[categoria].keys():
         print(f"\t\t\t*{i.title()}*")
@@ -87,7 +95,7 @@ def leer_experimentos_categorias(categoria:str):
         print(df)
         print()
         
-def leer_lista_experimentos_categoria(categoria:str, experimento:str):
+def leer_lista_experimentos_categoria(categoria:str, experimento:str):  # Experimentos de UNA SOLA categoría
     db = leer_db()
     df = pd.DataFrame(db[categoria][experimento])
     df.set_index("id", inplace=True)
@@ -97,24 +105,6 @@ def mostrar_ids_disponibles(categoria:str, experimento:str):
     db = leer_db()
     print(f"IDs disponibles: {', '.join([str(item) for item in db[categoria][experimento]["id"]])}")
 
-def eliminar_exp_id(categoria:str, experimento:str, idx:int):
-
-    db = leer_db()
-
-    posicion = db[categoria][experimento]['id'].index(idx)
-
-    db[categoria][experimento]['id'].pop(posicion)
-    db[categoria][experimento]['volumen'].pop(posicion)
-    db[categoria][experimento]['tiempo'].pop(posicion)
-    db[categoria][experimento]['caudal'].pop(posicion)
-    db[categoria][experimento]['fecha_experimento'].pop(posicion)
-    db[categoria][experimento]['fecha_registro'].pop(posicion)
-
-    guardar_registo_db(db)
-    
-    print()
-    
-    return f'El experimento "{experimento}" con ID {idx} de la categoría "{categoria}" se a eliminado con éxito.'
 
 ######### CRUD experimentos FÍSICA #########
     
@@ -197,3 +187,81 @@ def actualizar_fisica_caudal_exp_idx(categoria:str, experimento:str, idx:int, nu
     print()
     
     return f'El nuevo caudal del experimento es {nueva_res} L/s.\nExperimento modificado con exito!'
+
+def eliminar_exp_id(categoria:str, experimento:str, idx:int):
+
+    db = leer_db()
+
+    posicion = db[categoria][experimento]['id'].index(idx)
+
+    db[categoria][experimento]['id'].pop(posicion)
+    db[categoria][experimento]['volumen'].pop(posicion)
+    db[categoria][experimento]['tiempo'].pop(posicion)
+    db[categoria][experimento]['caudal'].pop(posicion)
+    db[categoria][experimento]['fecha_experimento'].pop(posicion)
+    db[categoria][experimento]['fecha_registro'].pop(posicion)
+
+    guardar_registo_db(db)
+    
+    print()
+    
+    return f'El experimento "{experimento}" con ID {idx} de la categoría "{categoria}" se a eliminado con éxito.'
+
+### Voltaje ###
+def crear_fisica_voltaje(corriente:float, resistencia:float, fecha:str):
+    # Cálculo
+    print(f'Corriente: {corriente}\nResistencia: {resistencia}')    
+    res = round(corriente * resistencia, 2)
+    
+    db = leer_db()
+        
+    if db['fisica']['voltaje']['id'].__len__() == 0:
+        db['fisica']['voltaje']['id'].append(0)
+        db['fisica']['voltaje']['corriente'].append(corriente)
+        db['fisica']['voltaje']['resistencia'].append(resistencia)
+        db['fisica']['voltaje']['voltaje'].append(res)
+        db['fisica']['voltaje']['fecha_experimento'].append(fecha)
+        db['fisica']['voltaje']['fecha_registro'].append(str(datetime.now().date()))
+    else:
+        db['fisica']['voltaje']['id'].append(db['fisica']['voltaje']['id'][-1] + 1)
+        db['fisica']['voltaje']['corriente'].append(corriente)
+        db['fisica']['voltaje']['resistencia'].append(resistencia)
+        db['fisica']['voltaje']['voltaje'].append(res)
+        db['fisica']['voltaje']['fecha_experimento'].append(fecha)
+        db['fisica']['voltaje']['fecha_registro'].append(str(datetime.now().date()))
+    
+    guardar_registo_db(db)
+    
+    print()
+    
+    return f'El voltaje del experimento es {res} V.\nExperimento registrado con exito!'
+
+def leer_fisica_voltaje_exp_idx(categoria:str, experimento:str, idx:int):
+    db = leer_db()
+    df = pd.DataFrame(db[categoria][experimento])
+    df.set_index("id", inplace=True)
+    print(f"\t*{categoria.title()}*")
+    print(f"\t*{experimento.title()}*")
+    print(df.loc[idx])
+    
+def actualizar_voltaje_caudal_exp_idx(categoria:str, experimento:str, idx:int, nueva_corriente:float, nueva_resistencia:float, nueva_fecha:str):
+    # leer_lista_experimentos_categoria(categoria, experimento)
+
+    print(f'Corriente: {nueva_corriente}\Resistencia: {nueva_resistencia}') 
+    nueva_res = round(nueva_corriente * nueva_resistencia, 2)
+
+    db = leer_db()
+
+    posicion = db[categoria][experimento]['id'].index(idx)
+
+    db[categoria][experimento]['corriente'][posicion] = nueva_corriente
+    db[categoria][experimento]['resistencia'][posicion] = nueva_resistencia
+    db[categoria][experimento]['voltaje'][posicion] = nueva_res
+    db[categoria][experimento]['fecha_experimento'][posicion] = nueva_fecha
+    db[categoria][experimento]['fecha_registro'][posicion] = str(datetime.now().date()) # Se sobreescribe la fecha de registro.
+
+    guardar_registo_db(db)
+    
+    print()
+    
+    return f'El nuevo voltaje del experimento es {nueva_res} V.\nExperimento modificado con exito!'
